@@ -13,7 +13,7 @@ User Function MA650EMP()
 
     Local i				:= 0
     Local nOpc 			:= 5 //3 - Inclusao, 4 - Alteracao, 5 - Exclusao
-    Local cOp			:= SD4->D4_OP //SD4 está posicionada na ultima op gerada
+    Local cOp			:= SD4->D4_OP //SD4 está posicionada na ultima op gerada quando o produto possui estrutura na SG1. (Refatorar no próximo job.)
 	Local aMATA650		:= {} //-Array com os campos
     Local DDATABASE		:= DATE()
 	Private l_Email		:= .T.
@@ -22,14 +22,14 @@ User Function MA650EMP()
 	Private c_Titulo	:= "OP: " + SD4->D4_OP + " Notificação de erro na exclusão automática do MATA650."
 	Private c_Corpo		:= c_Titulo + CRLF + "Acionamento Key User para verificar com o usuário " + UsrRetName(__CUSERID) +" o ocorrido."
 
-    For i:=1 To Len(aCols)
-
+    For i:=1 To Len(aCols) //Verifica quantos itens foram empenhados
         // Fecha a tabela de pedidos em aberto caso o alias esteja em uso
 		If (Select("PEGALA") > 0)
 			DBSelectArea("PEGALA")
 			DBCloseArea()
 		EndIf
 
+		//Query para selecionar a descrição do produto empenhado juntao com a descrição customizada pelo Analista de BI
         BEGINSQL ALIAS "PEGALA"
             SELECT 
                 B1.B1_DESC AS BRITO, 
@@ -50,8 +50,8 @@ User Function MA650EMP()
         DbSetOrder(1)
         If dbSeek(FwXFilial("SD4")+aCols[i][1]+cOp)
             RecLock("SD4", .F.)
-                SD4->D4_FSDSC := PEGALA->BRITO
-                SD4->D4_FSTP  := PEGALA->BRITO1
+                SD4->D4_FSDSC := PEGALA->BRITO	//Atualiza campo desnecessário por capricho do Analista de BI
+                SD4->D4_FSTP  := PEGALA->BRITO1	//Atualiza campo desnecessário por capricho da Analista de BI
             MsUnlock()
         EndIf
     Next
@@ -59,8 +59,7 @@ User Function MA650EMP()
 	// Gera um novo alias para a tabela temporária
 	c_AliasAux := GetNextAlias()
 
-	// Pesquisa pelos produtos que não devem
-	// gerar Ordem de Produção
+	// Pesquisa pelos produtos que não devem gerar Ordem de Produção por não cadastrarem as estruturas dos produtos corretamente
 	BEGINSQL ALIAS c_AliasAux
 		SELECT
 			C2.C2_FILIAL  CFILAUX,
@@ -90,7 +89,7 @@ User Function MA650EMP()
 			AND C2.%NOTDEL%
 	ENDSQL
 
-	//Execauto para excluir as op's e empenhos 
+	//Execauto para excluir as op's de itens cadastrados errados na estrutura do produto.
 	While (!EOF())
 			aMATA650 := {;
                 {'C2_FILIAL'    , CFILAUX   ,NIL},;
@@ -113,7 +112,7 @@ User Function MA650EMP()
 
     msExecAuto({|x,Y| Mata650(x,Y)},aMata650,nOpc)
 
-	//Se Erro, apresenta mensagem para que o usuário possa nos informar
+	//Se Erro, apresenta mensagem para que o usuário possa me informar além de me enviar um e-mail com o ocorrido
     If lMsErroAuto
 		jEnvMail()
 		Help(NIL, NIL, 'ERR_OP', NIL, 'Erro no ajuste de Empenho e Op.',;
@@ -127,7 +126,7 @@ User Function MA650EMP()
 Return (Nil)
 
 /*/{Protheus.doc} jEnvMail
-	Envia email se erro
+	Função desenvolvida para enviar e-mail no próprio fonte
 	@type function
 	@version 12.1.25
 	@author Jonas Machado

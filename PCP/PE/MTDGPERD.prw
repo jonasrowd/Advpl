@@ -1,19 +1,20 @@
 /*/{Protheus.doc} MTDGPERD
-	Ponto de entrada para preencher campos da Classificação da Perda na Produção PCP Mod2
+	Ponto de entrada para preencher a tela do apontamento de Perda na Produção PCP Mod2 de acordo com regras Bomix e Sopro.
 	@type Function
 	@version 12.1.25
 	@author Jonas Machado
 	@since 22/09/2021
 /*/
-User Function MTDGPERD
-	Local a_Area  := FwGetArea() //
-	Local c_Prod  := PARAMIXB[1] //
-	Local c_OP    := PARAMIXB[2] //
-	Local n_Qtd   := PARAMIXB[3] //
-	Local n_Size  := 0           //
+User Function MTDGPERD()
+
+	Local a_Area  := FwGetArea()
+	Local c_Prod  := PARAMIXB[1]
+	Local c_OP    := PARAMIXB[2]
+	Local n_Qtd   := PARAMIXB[3]
+	Local n_Size  := 0          
 	// Local n_Count := 0
 
-	If cFilAnt == '020101'
+	If FwXFilial() == '020101' //Filial Sopro
 		// Carrega as informações de perda da MASTER
 		fMasRes(c_OP)
 
@@ -77,7 +78,7 @@ User Function MTDGPERD
 		// 	DBSelectArea("MASTER")
 		// 	DBCloseArea()
 		// EndIf
-	ElseIf cFilAnt == '010101' //Para filial Bomix continua carregando a quantidade da perda
+	ElseIf FwXFilial() == '010101' //Para filial Bomix continua carregando a quantidade da perda
 
 		DbSelectArea("SB1")
 		DbSetOrder(1)

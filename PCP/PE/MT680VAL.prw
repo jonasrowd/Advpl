@@ -1,14 +1,14 @@
 #Include 'Totvs.ch'
 
 /*/{Protheus.doc} MT680VAL
-	Ponto de entrada para validar os dados da Produção PCP Mod2
+	Ponto de entrada solicitado pelo setor de Pcp com regras para apontamento de produção.
 	@type Function
 	@version 12.1.25
 	@author Jonas Machado
 	@since 30/07/2021
 	@return variant, Logical
 /*/
-User Function MT680VAL
+User Function MT680VAL()
 	Local a_Area    := GetArea()
 	Local l_Ret     := .T.
 	Local n_Op		:= M->H6_OP

@@ -3,7 +3,7 @@
 
 /*/{Protheus.doc} A250ARD4
     Não grava perda de itens específicos com base na tabela Z05 campo Z05_NOME = B1_BRTPPR
-    @type function
+    @type Function
     @version 12.1.25
     @author Jonas Machado
     @since 19/07/2021
@@ -13,7 +13,7 @@ User Function A250ARD4()
     Local nX := 0
     aSd4  := PARAMIXB
 
-    If SH6->H6_QTDPERD > 0
+    If SH6->H6_QTDPERD > 0 //Se for apontamento de perda, avalia o consumo para Bomix e Sopro
         For nX := 1 to Len(aSd4[1])
             DbSelectArea("SB1")
             DbSetOrder(1)
@@ -25,17 +25,15 @@ User Function A250ARD4()
         Next
     EndIf
 
-    If cFilAnt == "010101"
-        If SH6->H6_QTDPROD > 0
-            For nX := 1 to Len(aSd4[1])
-                DbSelectArea("SB1")
-                DbSetOrder(1)
-                DbSeek(FwXFilial("SB1") + aSd4[1][nX][3])
-                If !fConsumo(aSd4[1][nX][3],aSd4[1][nX][11])
-                    aSd4[1][nX][2] := 0
-                EndIf
-            Next
-        EndIf
+    If (FwXFilial() == "010101" .And. SH6->H6_QTDPROD > 0) //Se for Bomix e for apontamento de produção avalia o consumo
+        For nX := 1 to Len(aSd4[1])
+            DbSelectArea("SB1")
+            DbSetOrder(1)
+            DbSeek(FwXFilial("SB1") + aSd4[1][nX][3])
+            If !fConsumo(aSd4[1][nX][3],aSd4[1][nX][11])
+                aSd4[1][nX][2] := 0
+            EndIf
+        Next
     EndIf
 
 Return aSD4
@@ -76,14 +74,14 @@ Static Function gravaPerda(_cCod)
 Return .T. // Se não achou configuração de Perda, grava perda normalmente
 
 /*/{Protheus.doc} fConsumo
-    Função utilizada para verificar os itens que podem ser consumidos no apontamento de produção
+    Função utilizada para verificar os itens que podem ser consumidos no apontamento de produção antes de completar o pallet.
     @type Function
     @version 12.1.25
     @author Jonas Machado
     @since 27/09/2021
     @param cProd, character, Código do produto
     @param cOp, character, Número da Op
-    @return logical, Retorna verdadeiro falso para consumir e verdadeiro não consome.
+    @return logical, lRet, Retorna verdadeiro falso para consumir e verdadeiro não consome.
 /*/
 Static Function fConsumo(cProd,cOp)
 
@@ -118,6 +116,7 @@ Static Function fConsumo(cProd,cOp)
             AND D4.D4_COD = %Exp:cProd%
     ENDSQL
 
+    //Avalia se o produto deverá ser consumido no apontamento antes de fechar o pallet.
     If CONSU->CONSUMO  == 'N'
         If CONSU->ENTREGUE <> 0
             nCounter := Int(CONSU->ENTREGUE / CONSU->QUANTBAS)

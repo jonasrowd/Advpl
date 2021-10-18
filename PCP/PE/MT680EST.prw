@@ -9,6 +9,7 @@
 	@return logical, l_Ret
 /*/
 User Function MT680EST
+
 	Local a_AreaSD3 := SD3->(GetArea())
 	Local n_Acao    := PARAMIXB[1]
 	Local a_Area    := GetArea()

@@ -3,17 +3,18 @@
 
 /*/{Protheus.doc} FESTG001
 	Gatilho para preencher a quantidade destino do produto destino no Apontamento de Perda/ClassIficação da Perda
-	@type function
+	@type Function
 	@version 12.1.25
 	@author Jonas Machado
 	@since 22/09/2021
-	@return numeric, Retorna a quantidade de destino.
+	@return numeric, n_QtdDest, Retorna a quantidade de destino.
 /*/
-User Function FESTG001
+User Function FESTG001()
+
 	Local a_Area    := GetArea()
 	Local n_QtdDest := 0
 
-	If cFilAnt == '010101'
+	If cFilAnt == '010101' //Bomix
 		If aCols[n][Len(aHeader) + 1] == .F.
 			c_Prod   := aCols[n][AScan(aHeader,{ |x| Alltrim(x[2]) == 'BC_PRODUTO'})]
 			n_QtdPer := aCols[n][AScan(aHeader,{ |x| Alltrim(x[2]) == 'BC_QUANT'})]
@@ -36,7 +37,7 @@ User Function FESTG001
 				c_UmDest := SB1->B1_UM
 			EndIf
 
-			// VERIfICAÇÃO DA CONDIÇÃO DE UN/PC FRACIONADO INSERIDO POR VICTOR SOUSA 02/12/19
+			// VERIfICAÇÃO DA CONDIÇÃO DE UN/PC FRACIONADO
 			If RTRIM(c_Um) $ "UN/PC" .AND.  n_QtdPer%1<>0
 				MsgInfo("Quantidade fracionada não permitida para este produto. Vou corrigir pra você.", "Nao é assim!") 	
 				aCols[n][AScan(aHeader,{ |x| Alltrim(x[2]) == 'BC_QUANT'})]:= M->H6_QTDPERD
@@ -54,7 +55,7 @@ User Function FESTG001
 			EndIf
 		EndIf
 
-	// ElseIf cFilAnt == '020101'
+	// ElseIf cFilAnt == '020101' //Sopro
 	
 	// 	If aCols[n][Len(aHeader) + 1] == .F.
 	// 		c_Prod	:= aCols[n][AScan(aHeader,{ |x| Alltrim(x[2]) == 'BC_PRODUTO'})]

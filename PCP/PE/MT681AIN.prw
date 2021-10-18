@@ -7,7 +7,8 @@
 	@author Jonas Machado
 	@since 30/09/2021
 /*/
-User Function MT681AIN
+User Function MT681AIN()
+
 	Local a_Area := GetArea()
 
 	dbSelectArea("SC2")
