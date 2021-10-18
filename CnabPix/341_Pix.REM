@@ -1,0 +1,52 @@
+ID REGISTRO    0010010"0"                                                         
+ID ARQUIVO     0020020"1"                                                         
+LITERAL REMESSA0030090"REMESSA"                                                   
+COD SERVICO    0100110"02"                                                        
+LITERAL SERVIC 0120260PADR("PIX",12," ")                                          
+ISPB PARTICIPAN0270340SA6->A6_ISPB                                                
+COD INSCRICAO  0350360IIF(SM0->M0_TPINSC==1,"01","02")                            
+CPF CNPJ       0370500PADL(ALLTRIM(SM0->M0_CGC),14,"0")                           
+AGENCIA        0510540STRZERO(VAL(F70->F70_AGENCI),4)                             
+CONTA          0550740PADL(ALLTRIM(F70->F70_NUMCON),19,"0")+F70->F70_DVCTA        
+TIPO CONTA     0750780"CACC"                                                      
+CHAVE PIX      0791550F70->F70_CHVPIX                                             
+DATA GERACAO   1561630GRAVADATA(DDATABASE,.F.,8)                                  
+COD CONVENIO   1641930SEE->EE_CODEMP + SPACE(10)                                  
+EXC PSP RECEB  1942130SPACE(20)                                                   
+BRANCOS        2147410SPACE(531)                                                  
+VERSAO DO ARQ  7427440"001"                                                       
+SEQUENCIAL     7457500"000001"                                                    
+ID REGISTRO    0010010"1"                                                         
+COD INSCRICAO  0020030IIF(SM0->M0_TPINSC==1,"01","02")                            
+CPF CNPJ       0040170PADL(ALLTRIM(SM0->M0_CGC),14,"0")                           
+AGENCIA        0180210STRZERO(VAL(F70->F70_AGENCI),4)                             
+CONTA          0220410PADL(ALLTRIM(F70->F70_NUMCON),19,"0")+F70->F70_DVCTA        
+TIPO CONTA     0420450"CACC"                                                      
+CHAVE PIX      0461220F70->F70_CHVPIX                                             
+TIPO COBRANCA  1231230"2"                                                         
+OCORRENCIA     1241250IF(F71->F71_SOLCAN=="1","02","01")                          
+IDENTIFICADOR  1261600STRZERO(VAL(F71->F71_IDTRAN),35)                            
+EXPIRACAO      1611750"000000000000000"                                           
+DT VENCIMENTO  1761830GRAVADATA(SE1->E1_VENCREA,.F.,8)                            
+ACEITE         1841840"N"                                                         
+VALOR ORIGINAL 1852012STRZERO(INT(ROUND(F71->F71_VLRPIX*100,2)),17)               
+VALOR JUROS    2022182STRZERO(INT(ROUND(SE1->E1_VALJUR*100,2)),17)                
+VALOR MULTA    2192352STRZERO(INT(ROUND(SE1->E1_MULTA*100,2)),17)                 
+VALOR DESC/ABAT2362522STRZERO(INT(ROUND(SE1->E1_DESCONT*100,2)),17)               
+PERMITE ALTERAR2532530"N"                                                         
+COD INSCRICAO  2542550IIF(SA1->A1_PESSOA="F","01","02")                           
+CPF CGC PAGADOR2562690STRZERO(VAL(SA1->A1_CGC),14,0)                              
+NOME PAGADOR   2704090SUBSTR(SA1->A1_NOME,1,140)                                  
+SOL PAG/CPO LIV4105490SPACE(140)                                                  
+BRANCOS        5505500SPACE(1)                                                    
+EXC PSP RECEB  5515700SPACE(20)                                                   
+BRANCOS        5717200SPACE(150)                                                  
+DT JUROS       7217280CNABDJUR()                                                  
+DT MULTA       7297360CNABDMULT()                                                 
+DT DESCONTO    7377440CNABDDESC()                                                 
+SEQUENCIAL     7457500INCREMENTA()                                                
+ID REGISTRO    0010010"9"                                                         
+BRANCOS        0027120SPACE(711)                                                  
+VALOR TOTAL    7137292STRZERO(NSOMAVALOR,17)                                      
+QTD DE DETALHES7307440STRZERO(nQtdTotTit,15)                                      
+SEQUENCIAL     7457500INCREMENTA()                                                
