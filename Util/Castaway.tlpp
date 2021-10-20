@@ -1,0 +1,17 @@
+#include "TOTVS.CH"
+  
+User Function TWebEngine()
+  DEFINE DIALOG oDlg TITLE "Exemplo TWebEngine" FROM 180,180 TO 550,700 PIXEL
+  
+    // Prepara o conector WebSocket
+    PRIVATE oWebChannel := TWebChannel():New()
+    nPort := oWebChannel:connect()
+    
+    // Cria componente
+    PRIVATE oWebEngine := TWebEngine():New(oDlg, 0, 0, 100, 100,, nPort)
+    oWebEngine:bLoadFinished := {|self,url| conout("Termino da carga do pagina: " + url) }
+    oWebEngine:navigate("http://www.jonasmachado.com.br")
+    oWebEngine:Align := CONTROL_ALIGN_ALLCLIENT
+  
+  ACTIVATE DIALOG oDlg CENTERED
+Return

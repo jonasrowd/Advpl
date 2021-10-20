@@ -2,8 +2,7 @@
 #Include 'Ap5mail.ch'
 
 /*/{Protheus.doc} FMATA650
-	Ponto de entrada desenvolvido para preencher campos personalizados na SD4
-	e excluir as Op's e Empenhos que não querem que gere.
+	ExecAuto 650
 	@type function
 	@version 12.1.25
 	@author Jonas Machado
@@ -12,13 +11,13 @@
 User Function FMATA650()
 
     Local nOpc 			:= 5 //3 - Inclusao, 4 - Alteracao, 5 - Exclusao
-    Local cOp			:= ""
-	Local aMATA650		:= {} //-Array com os campos
+    Local cOp			:= ""//Passar a OP 
+	Local aMATA650		:= {} //Array com os campos
     Local DDATABASE		:= DATE()
 	Private l_Email		:= .T.
     Private lMsErroAuto := .F.
-	Private c_Email		:= 'ti@bomix.com.br'
-	Private c_Titulo	:= "OP: " + SD4->D4_OP + " Notificação de erro na exclusão automática do MATA650."
+	Private c_Email		:= '' //E-mail
+	Private c_Titulo	:= "OP: " cOp + " Notificação de erro na exclusão automática do MATA650."
 	Private c_Corpo		:= c_Titulo + CRLF + "Acionamento Key User para verificar com o usuário " + UsrRetName(__CUSERID) +" o ocorrido."
 
 	// Gera um novo alias para a tabela temporária
@@ -102,9 +101,9 @@ Static Function jEnvMail()
 	Local _cAccount  	:= Alltrim(GETMV("BM_BOLMAIL"))	//Conta de e-mail
 	Local _cPassword	:= Alltrim(GETMV("BM_BOLSNH"))	//Senha da conta de e-mail
 	Local _cEnvia    	:= Alltrim(GETMV("BM_BOLMAIL"))	//Endereco de e-mail
-	Local _cTo			:= "jonas.machado@bomix.com.br"// _Par1+";"+ALLTRIM(UsrRetMail(__cUserID))			//Destinatario
+	Local _cTo			:= ""// _Par1+";"+ALLTRIM(UsrRetMail(__cUserID))			//Destinatario
 	Local _cMsg			:= "Erro na geração das op x pedidos de venda."			//Corpo da Mensagem
-	Local _cSubj		:= OemToAnsi('BOMIX - Geração de Op ') //Assunto
+	Local _cSubj		:= OemToAnsi('Empresa - Geração de Op ') //Assunto
 
 	//Conecta ao servidor de SMTP
 	CONNECT SMTP SERVER _cServer ACCOUNT _cAccount PASSWORD _cPassword Result lConectou

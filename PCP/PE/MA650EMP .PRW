@@ -18,7 +18,7 @@ User Function MA650EMP()
     Local DDATABASE		:= DATE()
 	Private l_Email		:= .T.
     Private lMsErroAuto := .F.
-	Private c_Email		:= 'ti@bomix.com.br'
+	Private c_Email		:= 'jonas.machado@bomix.com.br'
 	Private c_Titulo	:= "OP: " + SD4->D4_OP + " Notificação de erro na exclusão automática do MATA650."
 	Private c_Corpo		:= c_Titulo + CRLF + "Acionamento Key User para verificar com o usuário " + UsrRetName(__CUSERID) +" o ocorrido."
 
@@ -87,6 +87,7 @@ User Function MA650EMP()
 			C2.C2_NUM + C2.C2_ITEM + C2.C2_SEQUEN = %EXP:AllTrim(cOp)%
 			AND Z05.Z05_GERAOP = 'N'
 			AND C2.%NOTDEL%
+			AND C2.C2_FILIAL = %XFILIAL:SC2%
 	ENDSQL
 
 	//Execauto para excluir as op's de itens cadastrados errados na estrutura do produto.

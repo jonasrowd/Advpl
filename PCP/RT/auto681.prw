@@ -1,4 +1,4 @@
-#Include 'FIVEWIN.CH'
+#Include 'TOTVS.CH'
 
 User Function FMATA681
 	Local cQuery := ""
@@ -7,7 +7,7 @@ User Function FMATA681
 	Private lMsHelpAuto := .F.	// Determina se as mensagens de help devem ser direcionadas para o arq. de log
 	Private lMsErroAuto := .F.	// Determina se houve alguma inconsistencia na execucao da rotina
 
-	cQuery := " SELECT * FROM " + RetSqlName("SH6") + " WHERE D_E_L_E_T_ = '' AND H6_DATAINI BETWEEN '20150330' AND '20150418' AND H6_FILIAL = '" + xFilial("SH6") + "' "
+	cQuery := " SELECT * FROM " + RetSqlName("SH6") + " WHERE D_E_L_E_T_ = '' AND H6_DATAINI BETWEEN '20210330' AND '20150418' AND H6_FILIAL = '" + xFilial("SH6") + "' "
 
 	dbUseArea(.T.,"TOPCONN",TcGenQry(,,cQuery),"EST",.T.,.T.)
 	
