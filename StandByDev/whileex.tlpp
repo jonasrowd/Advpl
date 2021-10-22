@@ -1,0 +1,68 @@
+#Include "Totvs.ch"
+
+/*/{Protheus.doc} CURSORIOUS
+    Função para percorrer a Sg1 em busca de estrutuas zuadas
+    @type function
+    @version 12.1.25
+    @author jonas.machado
+    @since 21/10/2021
+/*/
+USER FUNCTION CURSORIOUS()
+
+    Local lRet := .T.
+
+    RPCSetEnv("01", "010101")
+
+        BEGINSQL ALIAS "SQL"
+            SELECT DISTINCT
+                B1_GRUPO AS A,
+                B1_COD AS B,
+                B1_QB AS C
+            FROM SB1010 B1
+            WHERE
+                B1_FILIAL = '0101  ' AND
+                B1_BRTPPR = 'BALDE' AND
+                D_E_L_E_T_= '' AND
+                B1_MSBLQL <> 1
+        ENDSQL
+
+        WHILE !EOF()
+            DBSELECTAREA("SG1")
+            DBSETORDER(1)
+            DBSEEK(XFILIAL("SG1") + SQL->B)
+            WHILE SG1->G1_COD==SQL->B
+                IF SG1->G1_COMP == 'P00B00145'
+                    lret := .F.
+                    EXIT
+                ENDIF
+                DbSkip()
+            END
+            If lret
+                RECLOCK("SG1",.F.)
+                    SG1->G1_FILIAL:= FWXFILIAL()
+                    SG1->G1_COD   := SQL->B
+                    SG1->G1_COMP  := "P00B00145"
+                    SG1->G1_QUANT := 1
+                    SG1->G1_INI   := DATE()
+                    SG1->G1_FIM   := CTOD("31/12/2050")
+                MSUNLOCK()
+            EndIf
+            lret := .T.
+            DBSELECTAREA("SQL")
+            DBSKIP()
+        END
+    RPCCLEARENV()
+
+RETURN NIL
+
+
+//        AADD(AARRAY,SQL->A,SQL->B,SQL->C,"P00B00145",1)
+
+/*                cNivel := SG1->G1_NIV
+                SG1->G1_FIXVAR
+                SG1->G1_NIV
+                SG1->G1_NIVINV
+                SG1->G1_REVFIM
+                SG1->G1_VLCOMPE
+                SG1->G1_USAALT
+*/
